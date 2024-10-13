@@ -20,6 +20,7 @@ interface UserContextType extends User {
   addToWatchlist: (movie: Movie) => void;
   removeFromWatchlist: (imdbID: string) => void;
   setFavoriteCategory: (category: string) => void;
+  saveItem: (item: Movie) => void; 
 }
 
 const defaultValues: UserContextType = {
@@ -32,6 +33,7 @@ const defaultValues: UserContextType = {
   addToWatchlist: () => {},
   removeFromWatchlist: () => {},
   setFavoriteCategory: () => {},
+  saveItem: () => {},
 };
 
 export const UserContext = createContext<UserContextType>(defaultValues);
@@ -51,6 +53,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  
   const logIn = (name: string) => {
     const newUser = { ...user, loggedIn: true, userName: name };
     setUser(newUser);
@@ -83,8 +86,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
   };
 
+  const saveItem = (item: Movie) => {
+    const updatedUser = { ...user, watchlist: [...user.watchlist, item] };
+    setUser(updatedUser);
+  };
+
   return (
-    <UserContext.Provider value={{ ...user, logIn, logOut, addToWatchlist, removeFromWatchlist, setFavoriteCategory }}>
+    <UserContext.Provider value={{ ...user, logIn, logOut, addToWatchlist, removeFromWatchlist, setFavoriteCategory, saveItem }}>
       {children}
     </UserContext.Provider>
   );
