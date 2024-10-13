@@ -5,11 +5,21 @@ import { Link } from 'react-router-dom';
 const Categories = () => {
   const [categories] = useState<string[]>(['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi']);
   const [categoryItems, setCategoryItems] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const { setFavoriteCategory } = useContext(UserContext);
 
   const handleCategoryClick = (category: string) => {
+    setLoading(true);
+    setError(null);
+
     fetch(`http://www.omdbapi.com/?s=${category}&apikey=aee3b655`)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch movies');
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data.Search) {
           const movies = data.Search.map((movie: any) => ({
@@ -19,10 +29,15 @@ const Categories = () => {
             Poster: movie.Poster,
           }));
           setCategoryItems(movies);
+        } else {
+          setError('No movies found for this category');
         }
       })
       .catch((error) => {
-        console.error('Error fetching movies:', error);
+        setError('Error fetching movies: ' + error.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -37,6 +52,10 @@ const Categories = () => {
           </li>
         ))}
       </ul>
+
+      {loading && <div>Loading...</div>}
+      {error && <div className="text-red-500">{error}</div>}
+
       {categoryItems.length > 0 && (
         <div>
           <h3 className="text-2xl font-semibold mb-4 text-darkOlive">Movies in Category</h3>
