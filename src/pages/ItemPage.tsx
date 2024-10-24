@@ -17,7 +17,7 @@ const ItemPage = () => {
   const { addToWatchlist } = useContext(UserContext);
 
   useEffect(() => {
-    fetch(`http://www.omdbapi.com/?i=${id}&apikey=aee3b655`)
+    fetch(`https://www.omdbapi.com/?i=${id}&apikey=aee3b655`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch movie details');
