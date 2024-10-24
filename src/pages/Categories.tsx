@@ -13,7 +13,7 @@ const Categories = () => {
     setLoading(true);
     setError(null);
 
-    fetch(`http://www.omdbapi.com/?s=${category}&apikey=aee3b655`)
+    fetch(`https://www.omdbapi.com/?s=${category}&apikey=aee3b655`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch movies');
