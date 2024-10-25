@@ -17,7 +17,7 @@ const Header = () => {
       {loggedIn ? (
         <nav>
           <ul className="flex space-x-4">
-            <li><Link to="/home" className="hover:text-warmTan">Home</Link></li>
+            <li><Link to="/" className="hover:text-warmTan">Home</Link></li>
             <li><Link to="/profile" className="hover:text-warmTan">Profile</Link></li>
             <li><Link to="/categories" className="hover:text-warmTan">Categories</Link></li>
           </ul>
