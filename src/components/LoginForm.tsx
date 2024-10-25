@@ -3,7 +3,7 @@ import { UserContext } from '../context/UserContext';
 
 const LoginForm = () => {
   const { logIn } = useContext(UserContext);
-  const [name, setName] = useState('');
+  const [name, setName] = useState<string>('');
 
   const handleLogin = () => {
     if (name.trim() !== '') {

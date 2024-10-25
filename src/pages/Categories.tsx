@@ -1,12 +1,22 @@
 import { useState, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Link } from 'react-router-dom';
+interface Movie {
+  imdbID: string;
+  Title: string;
+  Year: string;
+  Poster: string;
+}
+interface ApiResponse {
+  Search?: Movie[];
+  Error?: string;
+}
 
 const Categories = () => {
   const [categories] = useState<string[]>(['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi']);
-  const [categoryItems, setCategoryItems] = useState<any[]>([]);
+  const [categoryItems, setCategoryItems] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { setFavoriteCategory } = useContext(UserContext);
 
   const handleCategoryClick = (category: string) => {
@@ -20,17 +30,11 @@ const Categories = () => {
         }
         return response.json();
       })
-      .then((data) => {
+      .then((data: ApiResponse) => {
         if (data.Search) {
-          const movies = data.Search.map((movie: any) => ({
-            imdbID: movie.imdbID,
-            Title: movie.Title,
-            Year: movie.Year,
-            Poster: movie.Poster,
-          }));
-          setCategoryItems(movies);
+          setCategoryItems(data.Search);
         } else {
-          setError('No movies found for this category');
+          setError(data.Error || 'No movies found for this category');
         }
       })
       .catch((error) => {
@@ -62,7 +66,9 @@ const Categories = () => {
           <ul className="flex flex-col items-center">
             {categoryItems.map((item) => (
               <li key={item.imdbID} className="mb-4">
-                <Link to={`/item/${item.imdbID}`} className="text-rustyOrange hover:underline">{item.Title} ({item.Year})</Link>
+                <Link to={`/item/${item.imdbID}`} className="text-rustyOrange hover:underline">
+                  {item.Title} ({item.Year})
+                </Link>
               </li>
             ))}
           </ul>
