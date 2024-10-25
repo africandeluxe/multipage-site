@@ -66,10 +66,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addToWatchlist = (movie: Movie) => {
-    const updatedUser = { ...user, watchlist: [...user.watchlist, movie] };
-    setUser(updatedUser);
-    localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
-    alert('Movie added to watchlist!');
+    if (!user.watchlist.some((item) => item.imdbID === movie.imdbID)) {
+      const updatedUser = { ...user, watchlist: [...user.watchlist, movie] };
+      setUser(updatedUser);
+      localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
+      alert('Movie added to watchlist!');
+    } else {
+      alert('This movie is already in your watchlist!');
+    }
   };
 
   const removeFromWatchlist = (imdbID: string) => {
@@ -80,14 +84,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const setFavoriteCategory = (category: string) => {
-    const updatedUser = { ...user, favoriteCategory: category };
-    setUser(updatedUser);
-    localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
+    if (user.favoriteCategory !== category) {
+      const updatedUser = { ...user, favoriteCategory: category };
+      setUser(updatedUser);
+      localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
+      alert(`Favorite category set to ${category}`);
+    } else {
+      alert(`"${category}" is already your favorite category!`);
+    }
   };
 
   const saveItem = (item: Movie) => {
-    const updatedUser = { ...user, watchlist: [...user.watchlist, item] };
-    setUser(updatedUser);
+    if (!user.watchlist.some((movie) => movie.imdbID === item.imdbID)) {
+      const updatedUser = { ...user, watchlist: [...user.watchlist, item] };
+      setUser(updatedUser);
+    }
   };
 
   return (
