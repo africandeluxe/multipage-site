@@ -66,11 +66,7 @@ const ItemPage = () => {
         <h2 className="text-3xl font-bold mb-4 text-darkOlive">{item.Title}</h2>
         <img src={item.Poster} alt={item.Title} className="mb-4 mx-auto" />
         <p className="mb-4">Year: {item.Year}</p>
-        <button
-          onClick={handleAddToWatchlist}
-          disabled={addingToWatchlist}
-          className="bg-darkOlive text-lightCream p-2 rounded-md hover:bg-rustyOrange"
-        >
+        <button onClick={handleAddToWatchlist} disabled={addingToWatchlist} className="bg-darkOlive text-lightCream p-2 rounded-md hover:bg-rustyOrange">
           {addingToWatchlist ? 'Adding...' : 'Save to Watchlist'}
         </button>
         <button onClick={() => window.history.back()} className="mt-4 bg-darkOlive text-lightCream p-2 rounded-md hover:bg-rustyOrange">Go Back</button>
