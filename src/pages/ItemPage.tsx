@@ -14,36 +14,38 @@ const ItemPage = () => {
   const [item, setItem] = useState<Movie | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [addingToWatchlist, setAddingToWatchlist] = useState(false);
   const { addToWatchlist } = useContext(UserContext);
 
   useEffect(() => {
-    fetch(`https://www.omdbapi.com/?i=${id}&apikey=aee3b655`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch movie details');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data) {
-          const movie = {
-            imdbID: data.imdbID,
-            Title: data.Title,
-            Year: data.Year,
-            Poster: data.Poster,
-          };
-          setItem(movie);
-        } else {
-          setError('Movie not found');
-        }
-      })
-      .catch((error) => {
-        setError('Error fetching movie details: ' + error.message);
-      })
-      .finally(() => {
+    const fetchItem = async () => {
+      try {
+        const response = await fetch(`https://www.omdbapi.com/?i=${id}&apikey=aee3b655`);
+        if (!response.ok) throw new Error('Failed to fetch movie details');
+        const data = await response.json();
+        setItem({
+          imdbID: data.imdbID,
+          Title: data.Title,
+          Year: data.Year,
+          Poster: data.Poster,
+        });
+      } catch (error) {
+        setError('Error fetching movie details: ' + (error as Error).message);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchItem();
   }, [id]);
+
+  const handleAddToWatchlist = async () => {
+    setAddingToWatchlist(true);
+    try {
+      await addToWatchlist(item!);
+    } finally {
+      setAddingToWatchlist(false);
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -63,7 +65,13 @@ const ItemPage = () => {
         <h2 className="text-3xl font-bold mb-4 text-darkOlive">{item.Title}</h2>
         <img src={item.Poster} alt={item.Title} className="mb-4 mx-auto" />
         <p className="mb-4">Year: {item.Year}</p>
-        <button onClick={() => addToWatchlist(item)} className="bg-darkOlive text-lightCream p-2 rounded-md hover:bg-rustyOrange">Save to Watchlist</button>
+        <button
+          onClick={handleAddToWatchlist}
+          disabled={addingToWatchlist}
+          className="bg-darkOlive text-lightCream p-2 rounded-md hover:bg-rustyOrange"
+        >
+          {addingToWatchlist ? 'Adding...' : 'Save to Watchlist'}
+        </button>
         <button onClick={() => window.history.back()} className="mt-4 bg-darkOlive text-lightCream p-2 rounded-md hover:bg-rustyOrange">Go Back</button>
       </div>
     </div>

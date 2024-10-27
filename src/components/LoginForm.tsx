@@ -4,12 +4,19 @@ import { UserContext } from '../context/UserContext';
 const LoginForm = () => {
   const { logIn } = useContext(UserContext);
   const [name, setName] = useState<string>('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (name.trim() !== '') {
-      logIn(name);
-    } else {
+  const handleLogin = async () => {
+    if (name.trim() === '') {
       alert('Please enter a username');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await logIn(name);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -20,7 +27,9 @@ const LoginForm = () => {
       <div className="bg-warmTan p-8 rounded-md shadow-md w-80 text-center">
         <h2 className="text-2xl font-bold mb-4 text-darkOlive">Log In to Your Account</h2>
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter username" className="border border-darkOlive p-2 w-full rounded-md mb-4 text-center"/>
-        <button onClick={handleLogin} className="bg-darkOlive text-lightCream p-2 w-full rounded-md hover:bg-rustyOrange">Log In</button>
+        <button onClick={handleLogin} disabled={loading} className="bg-darkOlive text-lightCream p-2 w-full rounded-md hover:bg-rustyOrange">
+          {loading ? 'Logging in...' : 'Log In'}
+        </button>
       </div>
     </div>
   );

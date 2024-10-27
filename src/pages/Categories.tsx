@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Link } from 'react-router-dom';
+
 interface Movie {
   imdbID: string;
   Title: string;
@@ -19,30 +20,23 @@ const Categories = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { setFavoriteCategory } = useContext(UserContext);
 
-  const handleCategoryClick = (category: string) => {
+  const handleCategoryClick = async (category: string) => {
     setLoading(true);
     setError(null);
 
-    fetch(`https://www.omdbapi.com/?s=${category}&apikey=aee3b655`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch movies');
-        }
-        return response.json();
-      })
-      .then((data: ApiResponse) => {
-        if (data.Search) {
-          setCategoryItems(data.Search);
-        } else {
-          setError(data.Error || 'No movies found for this category');
-        }
-      })
-      .catch((error) => {
-        setError('Error fetching movies: ' + error.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const response = await fetch(`https://www.omdbapi.com/?s=${category}&apikey=aee3b655`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch movies');
+      }
+      const data: ApiResponse = await response.json();
+      setCategoryItems(data.Search || []);
+      if (!data.Search) setError(data.Error || 'No movies found for this category');
+    } catch (error) {
+      setError('Error fetching movies: ' + (error as Error).message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
