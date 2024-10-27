@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import debounce from 'lodash.debounce';
 
 interface Movie {
   imdbID: string;
@@ -38,14 +39,14 @@ const ItemPage = () => {
     fetchItem();
   }, [id]);
 
-  const handleAddToWatchlist = async () => {
+  const handleAddToWatchlist = debounce(async () => {
     setAddingToWatchlist(true);
     try {
       await addToWatchlist(item!);
     } finally {
       setAddingToWatchlist(false);
     }
-  };
+  }, 500); 
 
   if (loading) {
     return <div>Loading...</div>;
